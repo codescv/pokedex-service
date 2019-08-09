@@ -1,3 +1,5 @@
+import logging
+
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
@@ -10,9 +12,8 @@ from fastai.vision import *
 
 logger = logging.getLogger(__name__)
 
-model_file_url = 'https://www.dropbox.com/s/y4kl2gv1akv7y4i/stage-2.pth?raw=1'
-model_file_name = 'model'
-classes = ['black', 'grizzly', 'teddys']
+model_file_url = 'https://storage.cloud.google.com/swift-district-235306.appspot.com/pokedex/models/export.pkl'
+model_file_name = 'export'
 path = Path(__file__).parent
 
 app = Starlette()
@@ -27,11 +28,9 @@ async def download_file(url, dest):
             with open(dest, 'wb') as f: f.write(data)
 
 async def setup_learner():
-    await download_file(model_file_url, path/'models'/f'{model_file_name}.pth')
-    data_bunch = ImageDataBunch.single_from_classes(path, classes,
-        ds_tfms=get_transforms(), size=224).normalize(imagenet_stats)
-    learn = cnn_learner(data_bunch, models.resnet34, pretrained=False)
-    learn.load(model_file_name)
+    await download_file(model_file_url, path/'models'/f'{model_file_name}.pkl')
+    learn = load_learner(path/'models')
+    logger.warn('loaded model: %s', learn)
     return learn
 
 loop = asyncio.get_event_loop()
@@ -50,7 +49,7 @@ async def analyze(request):
     img_bytes = await (data['file'].read())
     img = open_image(BytesIO(img_bytes))
     cat = learn.predict(img)[0]
-    logger.info('analyze result:', cat)
+    logger.info('analyze result: %s', cat)
     return JSONResponse({'result': cat.obj})
 
 if __name__ == '__main__':
