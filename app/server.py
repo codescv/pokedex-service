@@ -12,7 +12,7 @@ from fastai.vision import *
 
 logger = logging.getLogger(__name__)
 
-model_file_url = 'https://storage.cloud.google.com/swift-district-235306.appspot.com/pokedex/models/export.pkl'
+model_file_url = 'https://storage.googleapis.com/swift-district-235306.appspot.com/pokedex/models/export.pkl'
 model_file_name = 'export'
 path = Path(__file__).parent
 
