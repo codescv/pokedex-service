@@ -15,3 +15,9 @@ readiness_check:
   success_threshold: 5
   app_start_timeout_sec: 1500
 
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 1
+
+resources:
+  disk_size_gb: 100

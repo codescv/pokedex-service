@@ -8,6 +8,8 @@ from io import BytesIO
 from fastai import *
 from fastai.vision import *
 
+logger = logging.getLogger(__name__)
+
 model_file_url = 'https://www.dropbox.com/s/y4kl2gv1akv7y4i/stage-2.pth?raw=1'
 model_file_name = 'model'
 classes = ['black', 'grizzly', 'teddys']
@@ -48,7 +50,7 @@ async def analyze(request):
     img_bytes = await (data['file'].read())
     img = open_image(BytesIO(img_bytes))
     cat = learn.predict(img)[0]
-    print(cat.obj)
+    logger.info('analyze result:', cat)
     return JSONResponse({'result': cat.obj})
 
 if __name__ == '__main__':
